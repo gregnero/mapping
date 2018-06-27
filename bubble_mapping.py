@@ -1,6 +1,7 @@
 """
 
-Map the large bubble data discussed in the paper presented by Simpson et al. to a given set of images of the galactic plane captured by Spitzer.
+Map the large bubble data discussed in the paper presented by Simpson et al. to
+a given set of images of the galactic plane captured by Spitzer.
 
 """
 
@@ -20,12 +21,20 @@ bubble_data = pd.read_csv("../Desktop/mapping_data/bubbly.csv")
 bubble_data = bubble_data.values
 
 #Initialize list to store image arrays
-spitzer_images = []
+image_values = []
 
-#Load the image arrays into the list
+#Initialize list to store image names
+image_names = []
+
+#Load the sorted image values and names into their respective lists
 for file in sorted(os.listdir("../Desktop/mapping_data")):
     if file.endswith(".jpg"):
+        image_names.append(file) 
         with open(os.path.join("../Desktop/mapping_data", file), 'rb') as myfile:
-            spitzer_images.append(io.imread(myfile.name))
+            image_values.append(io.imread(myfile.name))
             print("Status: Loading image %s" %file)
+
+#Create a dictionary sorted by image names that contains the image name with its
+#respective image array
+image_dict = sorted(dict(zip(image_names, image_values)))
 
