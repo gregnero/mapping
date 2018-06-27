@@ -11,8 +11,9 @@ import os
 from skimage import io
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import matplotlib
 import sys
-
+import collections
 
 #Read in the csv bubble data as a DataFrame. Change directory as needed.
 bubble_data = pd.read_csv("../Desktop/mapping_data/bubbly.csv")
@@ -26,15 +27,14 @@ image_values = []
 #Initialize list to store image names
 image_names = []
 
+#Initialize ordered dictionary to store name:value pairs
+image_dict = collections.OrderedDict()
+
 #Load the sorted image values and names into their respective lists
 for file in sorted(os.listdir("../Desktop/mapping_data")):
     if file.endswith(".jpg"):
         image_names.append(file) 
         with open(os.path.join("../Desktop/mapping_data", file), 'rb') as myfile:
-            image_values.append(io.imread(myfile.name))
+            image_dict[file] = io.imread(myfile.name)
             print("Status: Loading image %s" %file)
-
-#Create a dictionary sorted by image names that contains the image name with its
-#respective image array
-image_dict = sorted(dict(zip(image_names, image_values)))
 
