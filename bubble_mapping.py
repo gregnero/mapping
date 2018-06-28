@@ -13,12 +13,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from skimage import io
+from skimage import util
 
 #Read in the csv bubble data as a DataFrame. Change directory as needed.
 bubble_data = pd.read_csv("../Desktop/mapping_data/bubbly.csv")
 
 #Convert the DataFrame into a numpy array
 bubble_data = bubble_data.values
+
+#Create array that contains the IDs
+IDs = bubble_data[:,0].reshape((3744,1))
+
+#Create an array that contains the glon,glat coordinates
+glon_glat = (np.vstack((bubble_data[:,1],bubble_data[:,2]))).T
+
+#Initialize a dictionary to store the bubbles by their name and location
+bubble_dict = {}
+
+#Create the dictionary from the arrays above
+for i in range(0,3744):
+    bubble_dict[IDs[i,0]] = (glon_glat[i,0],glon_glat[i,1])
+
 
 #Initialize list to store image arrays
 image_values = []
@@ -60,4 +75,10 @@ southgrid = np.concatenate(southgrid_list, axis=1)
 
 #Stitch the northgrid and southgrid together to make a HUGE image
 final_panorama = np.concatenate((northgrid,southgrid), axis=1)
+
+cropped = final_panorama[:,0:27000,:]
+io.imshow(cropped)
+plt.show()
+
+
 
