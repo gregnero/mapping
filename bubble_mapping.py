@@ -36,9 +36,6 @@ bubble_dict = {}
 for i in range(0,3744):
     bubble_dict[IDs[i,0]] = (glon_glat_reff[i,0],glon_glat_reff[i,1],glon_glat_reff[i,2])
 
-#Initialize list to store image arrays
-image_values = []
-
 #Initialize list to store image names
 image_names = []
 
