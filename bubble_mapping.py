@@ -123,6 +123,8 @@ for ID, degree_tuple in bubble_dict.items():
                            degree_tuple[2])
 
 
+for x,y in bubble_dict
+
 
 '''Cropping 
 cropped = final_panorama[:,0:9000,:]
