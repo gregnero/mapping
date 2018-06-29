@@ -27,12 +27,12 @@ IDs = bubble_data[:,0].reshape((3744,1))
 #Create an array that contains the glon,glat coordinates
 glon_glat = (np.vstack((bubble_data[:,1],bubble_data[:,2]))).T
 
-#Initialize a dictionary to store the bubbles by their name and location
-bubble_dict = {}
+#Initialize a dictionary to store the bubbles by their name and degree location
+bubble_dict_deg = {}
 
 #Create the dictionary from the arrays above
 for i in range(0,3744):
-    bubble_dict[IDs[i,0]] = (glon_glat[i,0],glon_glat[i,1])
+    bubble_dict_deg[IDs[i,0]] = (glon_glat[i,0],glon_glat[i,1])
 
 
 #Initialize list to store image arrays
@@ -76,9 +76,58 @@ southgrid = np.concatenate(southgrid_list, axis=1)
 #Stitch the northgrid and southgrid together to make a HUGE image
 final_panorama = np.concatenate((northgrid,southgrid), axis=1)
 
-cropped = final_panorama[:,0:27000,:]
+
+def degree_to_index(glon, glat, array):
+    '''
+    Returns array index tuple cooresponding to the glon, glat values
+    
+    Args:
+    --------------
+    glon: Floating. Galactic longitude. Unit: degrees. Expects range: [0:360]
+    glat: Floating. Galactic latitude. Unit: degrees. Expects range: [-1:1]
+    array: a numpy ndarray
+    
+    Usage: index = degree_to_index(220.34, -0.4, my_image_array)
+
+    '''
+
+    #Make sure input is good
+    if glon < 0 or glon > 360:
+        print('arg error: glon is out of acceptable range')
+    if glat < -1 or glat > 1:
+        print('arg error: glat is out of acceptable range')
+
+    #Regulate glon input to make the spherical wraparound less annoying
+    if glon <= 360 and glon >= 295.5:
+        glon = glon - 360
+
+    #Get array shape
+    rows = array.shape[0]
+    cols = array.shape[1]
+
+    #Set up the degree range for glon and glat based on the array shape
+    glat_range = np.linspace(1,-1,rows)
+    glon_range = np.linspace(64.5, -64.5, cols)
+
+    #Get the index based on closes value
+    glat_idx = (np.abs(glat_range - glat)).argmin()
+    glon_idx = (np.abs(glon_range - glon)).argmin()
+
+    return (glon_idx, glat_idx)
+
+
+#Initialize bubble dictionary for storing the id and its respective x,y array location
+bubble_dict_idx = {}
+
+#Convert degree values to array index values
+for ID, degree_tuple in bubble_dict_deg.items():
+    bubble_dict_idx[ID] = degree_to_index(degree_tuple[0],degree_tuple[1], final_panorama)
+
+
+
+'''Cropping 
+cropped = final_panorama[:,0:9000,:]
 io.imshow(cropped)
 plt.show()
-
-
+'''
 
