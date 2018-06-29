@@ -130,10 +130,20 @@ for ID, degree_tuple in bubble_dict.items():
     bubble_dict_idx[ID] = degree_to_index(degree_tuple[0],degree_tuple[1], degree_tuple[2],
                                           final_panorama)
 
+#Simple scatter plot to test bubble plotting (not including images!)
+ticker = 0
+for pixel_tuple in bubble_dict_idx.values():
+    plt.scatter(pixel_tuple[0], pixel_tuple[1])
+    ticker += 1
+print("%s bubbles were plotted! Yay!" %ticker)
+plt.show()
 
+
+
+'''For Debugging
 print(bubble_dict['1G018261-002967'])
-
 print(bubble_dict_idx['1G018261-002967'])
+'''
 
 '''Cropping 
 cropped = final_panorama[:,0:9000,:]
