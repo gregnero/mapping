@@ -75,17 +75,19 @@ southgrid = np.concatenate(southgrid_list, axis=1)
 final_panorama = np.concatenate((northgrid,southgrid), axis=1)
 
 
-def degree_to_index(glon, glat, array):
+def degree_to_index(glon, glat, reff, array):
     '''
     Returns array index tuple cooresponding to the glon, glat values
+    And a converted effective radius pixel value
     
     Args:
     --------------
     glon: Floating. Galactic longitude. Unit: degrees. Expects range: [0:360]
     glat: Floating. Galactic latitude. Unit: degrees. Expects range: [-1:1]
+    reff: floating. Unit: degrees.
     array: a numpy ndarray
     
-    Usage: index = degree_to_index(220.34, -0.4, my_image_array)
+    Usage: index = degree_to_index(220.34, -0.4, 0.0348, my_image_array)
 
     '''
 
@@ -94,6 +96,8 @@ def degree_to_index(glon, glat, array):
         print('arg error: glon is out of acceptable range')
     if glat < -1 or glat > 1:
         print('arg error: glat is out of acceptable range')
+    if reff < 0:
+        print('arg error: radius must be positive')
 
     #Regulate glon input to make the spherical wraparound less annoying
     if glon <= 360 and glon >= 295.5:
@@ -111,18 +115,25 @@ def degree_to_index(glon, glat, array):
     glat_idx = (np.abs(glat_range - glat)).argmin()
     glon_idx = (np.abs(glon_range - glon)).argmin()
 
-    return (glon_idx, glat_idx)
+    #Get the effective pixel radius
+    radius_in_pixels = int(reff * 3000)
+    
+    return (glon_idx, glat_idx, radius_in_pixels)
 
 
 #Initialize bubble dictionary for storing the id and its respective x,y array location
+#along with the effective radius in pixels
 bubble_dict_idx = {}
 
 #Convert degree values to array index values
 for ID, degree_tuple in bubble_dict.items():
-    bubble_dict_idx[ID] = (degree_to_index(degree_tuple[0],degree_tuple[1], final_panorama),
-                           degree_tuple[2])
+    bubble_dict_idx[ID] = degree_to_index(degree_tuple[0],degree_tuple[1], degree_tuple[2],
+                                          final_panorama)
 
 
+print(bubble_dict['1G018261-002967'])
+
+print(bubble_dict_idx['1G018261-002967'])
 
 '''Cropping 
 cropped = final_panorama[:,0:9000,:]
