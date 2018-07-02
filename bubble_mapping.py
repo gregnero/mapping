@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from skimage import io
 from skimage import util
+from matplotlib.patches import Circle
 
 
 #Read in the csv bubble data as a DataFrame. Change directory as needed.
@@ -130,6 +131,22 @@ for ID, degree_tuple in bubble_dict.items():
     bubble_dict_idx[ID] = degree_to_index(degree_tuple[0],degree_tuple[1], degree_tuple[2],
                                           final_panorama)
 
+
+
+#Put it all together!!!! :D
+fig,ax = plt.subplots()
+ax.imshow(final_panorama)
+ax.set_aspect('equal')
+for pixel_tuple in bubble_dict_idx.values():
+    ax.add_patch(Circle((pixel_tuple[0],pixel_tuple[1]),pixel_tuple[2],
+                         facecolor='none',edgecolor='b'))
+plt.show()
+
+
+
+
+
+'''
 #Simple scatter plot to test bubble plotting (not including images!)
 ticker = 0
 for pixel_tuple in bubble_dict_idx.values():
@@ -137,7 +154,7 @@ for pixel_tuple in bubble_dict_idx.values():
     ticker += 1
 print("%s bubbles were plotted! Yay!" %ticker)
 plt.show()
-
+'''
 
 
 '''For Debugging
