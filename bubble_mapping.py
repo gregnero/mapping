@@ -128,12 +128,10 @@ bubble_dict_idx = {}
 
 #Convert degree values to array index values
 for ID, degree_tuple in bubble_dict.items():
-    bubble_dict_idx[ID] = degree_to_index(degree_tuple[0],degree_tuple[1], degree_tuple[2],
-                                          final_panorama)
+    bubble_dict_idx[ID] = degree_to_index(degree_tuple[0],degree_tuple[1],
+                                          degree_tuple[2], final_panorama)
 
-
-
-#Put it all together!!!! :D
+#Put it all together!!!! Plot the image with the bubbles on it
 fig,ax = plt.subplots()
 ax.imshow(final_panorama)
 ax.set_aspect('equal')
@@ -142,29 +140,4 @@ for pixel_tuple in bubble_dict_idx.values():
                          facecolor='none',edgecolor='b'))
 plt.show()
 
-
-
-
-
-'''
-#Simple scatter plot to test bubble plotting (not including images!)
-ticker = 0
-for pixel_tuple in bubble_dict_idx.values():
-    plt.scatter(pixel_tuple[0], pixel_tuple[1])
-    ticker += 1
-print("%s bubbles were plotted! Yay!" %ticker)
-plt.show()
-'''
-
-
-'''For Debugging
-print(bubble_dict['1G018261-002967'])
-print(bubble_dict_idx['1G018261-002967'])
-'''
-
-'''Cropping 
-cropped = final_panorama[:,0:9000,:]
-io.imshow(cropped)
-plt.show()
-'''
 
