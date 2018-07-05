@@ -11,6 +11,8 @@ import sys
 from skimage import io
 import matplotlib.pyplot as plt
 
+from skimage.transform import resize, rescale
+
 #Read in the bubble csv with pandas and then convert to a numpy array
 bubble_data = (pd.read_csv("../Desktop/mapping_data/bubbly.csv")).values
 
@@ -126,5 +128,40 @@ for bubblename, numeric_tuple in bubble_dict.items():
     converted_bubble_dict[bubblename] = (degree_to_pixel(numeric_tuple[0], numeric_tuple[1],
                                                         numeric_tuple[2], final_panorama),
                                                         numeric_tuple[3])
-                                            
+
+
+cutout_dict = {}
+abandoned_cutouts = {}
+
+pad = 10
+dim = (224,224,3)
+
+
+
+for name,value in converted_bubble_dict.items():
+
+    center = (value[0][0], value[0][1])
+    radius = value[0][2]
+    hitrate = value[1]
+    
+    left = center[0] - (radius + pad)
+    right = center[0] + (radius + pad)
+    top = center[1] - (radius + pad)
+    bot = center[1] + (radius + pad)
+
+    extracted_bubble = final_panorama[top:bot,left:right,:]
+
+    if extracted_bubble.size == 0:
+        abandoned_cutouts[name] = (extracted_bubble)
+        continue
+
+    cutout = resize(extracted_bubble, dim)
+
+    cutout_dict[name] = (cutout, radius, hitrate)
+
+'''Plotting
+plt.imshow(final_panorama[:,0:9000,:])
+plt.show()                                            
+'''
+
 
