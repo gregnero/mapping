@@ -129,35 +129,53 @@ for bubblename, numeric_tuple in bubble_dict.items():
                                                         numeric_tuple[2], final_panorama),
                                                         numeric_tuple[3])
 
-
+#Initialize dictionaries for storing the cutouts
+#The abandoned cutouts store arrays that are too small to be resized
 cutout_dict = {}
 abandoned_cutouts = {}
 
+#Loop parameters
 pad = 10
 dim = (224,224,3)
 
-
-
+#Loop to create the cutouts
 for name,value in converted_bubble_dict.items():
 
+    #Get values from converted_bubble_dict
     center = (value[0][0], value[0][1])
     radius = value[0][2]
     hitrate = value[1]
     
+    #Establish crop borders for the bubble
     left = center[0] - (radius + pad)
     right = center[0] + (radius + pad)
     top = center[1] - (radius + pad)
     bot = center[1] + (radius + pad)
 
+    #Extract the bubble from the array
     extracted_bubble = final_panorama[top:bot,left:right,:]
 
+    #Workaround for resize() failure for zero-arrays.
+    #Failures get dumped into abandoned_cutouts
     if extracted_bubble.size == 0:
         abandoned_cutouts[name] = (extracted_bubble)
         continue
 
+    #Make the resized cutout
     cutout = resize(extracted_bubble, dim)
 
+    #Fill the cutout dictionary with valid arrays relavant numerics
     cutout_dict[name] = (cutout, radius, hitrate)
+
+
+'''Cutout testing
+print(len(list(cutout_dict.keys())))
+print(len(list(abandoned_cutouts.keys())))
+print(cutout_dict['1G018261-002967'][0].shape)
+plt.imshow(cutout_dict['1G018261-002967'][0])
+plt.show()
+'''
+
 
 '''Plotting
 plt.imshow(final_panorama[:,0:9000,:])
