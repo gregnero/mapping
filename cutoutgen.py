@@ -168,6 +168,15 @@ for name,value in converted_bubble_dict.items():
     cutout_dict[name] = (cutout, radius, hitrate)
 
 
+fig = plt.figure()
+fig.suptitle("Cutout Samples", fontsize=18)
+for i in range(1,7):
+    img = list(cutout_dict.values())[i][0]
+    fig.add_subplot(3,2,i)
+    plt.imshow(img)
+plt.show()
+
+
 '''Correlation between radius and hitrate
 radii = []
 hr = []
