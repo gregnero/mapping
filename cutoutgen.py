@@ -168,6 +168,43 @@ for name,value in converted_bubble_dict.items():
     cutout_dict[name] = (cutout, radius, hitrate)
 
 
+def show_cutout_samples(cutout_dictionary, num_samples=12):
+
+    cutout_names = []
+    cutout_images = []
+    cutout_radii = []
+    cutout_hitrates = []
+
+    for bub_name, bub_num in cutout_dictionary.items():
+        cutout_names.append(bub_name)
+        cutout_images.append(bub_num[0])
+        cutout_radii.append(bub_num[1])
+        cutout_hitrates.append(bub_num[2])
+
+    fig = plt.figure()
+    title = str(num_samples) + " Cutout Samples"
+    fig.suptitle(title, fontsize=18)
+    fig.subplots_adjust(hspace = 0.75)
+
+    for sample in range(1,13):
+        fig.add_subplot(3,4,sample)
+        plt.imshow(cutout_images[sample])
+        plot_title = cutout_names[sample] + "\n" + "(hitrate = " + str(cutout_hitrates[sample]) + ")"
+        plt.title(plot_title, fontsize=6)
+    print("Exit figure to continue...")
+    plt.show()
+
+
+
+
+show_cutout_samples(cutout_dict)
+
+
+
+
+
+
+'''
 fig = plt.figure()
 fig.suptitle("Cutout Samples", fontsize=18)
 for i in range(1,7):
@@ -175,7 +212,7 @@ for i in range(1,7):
     fig.add_subplot(3,2,i)
     plt.imshow(img)
 plt.show()
-
+'''
 
 '''Correlation between radius and hitrate
 radii = []
