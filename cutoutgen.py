@@ -168,6 +168,17 @@ for name,value in converted_bubble_dict.items():
     cutout_dict[name] = (cutout, radius, hitrate)
 
 
+'''Correlation between radius and hitrate
+radii = []
+hr = []
+for info in cutout_dict.values():
+    radii.append(info[1])
+    hr.append(info[2])
+
+plt.scatter(radii,hr)
+plt.show()
+'''
+
 '''Cutout testing
 print(len(list(cutout_dict.keys())))
 print(len(list(abandoned_cutouts.keys())))
