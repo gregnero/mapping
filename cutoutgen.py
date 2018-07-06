@@ -168,7 +168,7 @@ for name,value in converted_bubble_dict.items():
     cutout_dict[name] = (cutout, radius, hitrate)
 
 
-def show_cutout_samples(cutout_dictionary, num_samples=12):
+def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
 
     cutout_names = []
     cutout_images = []
@@ -176,14 +176,26 @@ def show_cutout_samples(cutout_dictionary, num_samples=12):
     cutout_hitrates = []
 
     for bub_name, bub_num in cutout_dictionary.items():
-        cutout_names.append(bub_name)
-        cutout_images.append(bub_num[0])
-        cutout_radii.append(bub_num[1])
-        cutout_hitrates.append(bub_num[2])
+        if show_best == True:
+            if bub_num[2] >= 0.5:
+                cutout_names.append(bub_name)
+                cutout_images.append(bub_num[0])
+                cutout_radii.append(bub_num[1])
+                cutout_hitrates.append(bub_num[2])
+            else:
+                continue
+        else:
+            cutout_names.append(bub_name)
+            cutout_images.append(bub_num[0])
+            cutout_radii.append(bub_num[1])
+            cutout_hitrates.append(bub_num[2])
 
     fig = plt.figure()
-    title = str(num_samples) + " Cutout Samples"
-    fig.suptitle(title, fontsize=18)
+    if show_best == True:
+        title = str(num_samples) + " Samples with High Hitrate" 
+    else:
+        title = str(num_samples) + " Cutout Samples"
+    fig.suptitle(title, fontsize=18, x=0.5, y=0.986)
     fig.subplots_adjust(hspace = 0.75)
 
     for sample in range(1,13):
@@ -196,8 +208,9 @@ def show_cutout_samples(cutout_dictionary, num_samples=12):
 
 
 
+show_cutout_samples(cutout_dict, show_best=False)
 
-show_cutout_samples(cutout_dict)
+show_cutout_samples(cutout_dict, show_best=True)
 
 
 
