@@ -169,15 +169,38 @@ for name,value in converted_bubble_dict.items():
 
 
 def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
+    '''
+    Returns:
+    -------------
+    Figure with cutout samples
 
+    Args:
+    -------------
+    cutout_dictionary: dictionary; contains names as keys and numeric tuple as values
+    show_best: bool; if True, will show assortment of high hitrate bubbles
+                     if Fasle, will show random assortment of bubbles
+    num_samples: int; number of samples to show. Currently fixed at 12 for convenience
+
+    Usage:
+    -------------
+    show_cutout_samples(cutout_dict, show_best=True)
+
+    ''' 
+    
+    #Initialize lists to store dictionary information
     cutout_names = []
     cutout_images = []
     cutout_radii = []
     cutout_hitrates = []
 
+    #Set hitrate threshold value for show_best restriction
+    #Note: make sure at least 12 valid bubbles can be found...
+    threshold = 0.5
+    
+    #Fill the lists depending on value of show_best
     for bub_name, bub_num in cutout_dictionary.items():
         if show_best == True:
-            if bub_num[2] >= 0.5:
+            if bub_num[2] >= threshold:
                 cutout_names.append(bub_name)
                 cutout_images.append(bub_num[0])
                 cutout_radii.append(bub_num[1])
@@ -190,6 +213,7 @@ def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
             cutout_radii.append(bub_num[1])
             cutout_hitrates.append(bub_num[2])
 
+    #Set up the figure 
     fig = plt.figure()
     if show_best == True:
         title = str(num_samples) + " Samples with High Hitrate" 
@@ -198,6 +222,7 @@ def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
     fig.suptitle(title, fontsize=18, x=0.5, y=0.986)
     fig.subplots_adjust(hspace = 0.75)
 
+    #Plot the sample cutouts
     for sample in range(1,13):
         fig.add_subplot(3,4,sample)
         plt.imshow(cutout_images[sample])
@@ -213,20 +238,6 @@ show_cutout_samples(cutout_dict, show_best=False)
 show_cutout_samples(cutout_dict, show_best=True)
 
 
-
-
-
-
-'''
-fig = plt.figure()
-fig.suptitle("Cutout Samples", fontsize=18)
-for i in range(1,7):
-    img = list(cutout_dict.values())[i][0]
-    fig.add_subplot(3,2,i)
-    plt.imshow(img)
-plt.show()
-'''
-
 '''Correlation between radius and hitrate
 radii = []
 hr = []
@@ -237,19 +248,3 @@ for info in cutout_dict.values():
 plt.scatter(radii,hr)
 plt.show()
 '''
-
-'''Cutout testing
-print(len(list(cutout_dict.keys())))
-print(len(list(abandoned_cutouts.keys())))
-print(cutout_dict['1G018261-002967'][0].shape)
-plt.imshow(cutout_dict['1G018261-002967'][0])
-plt.show()
-'''
-
-
-'''Plotting
-plt.imshow(final_panorama[:,0:9000,:])
-plt.show()                                            
-'''
-
-
