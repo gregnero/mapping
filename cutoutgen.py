@@ -130,9 +130,9 @@ for bubblename, numeric_tuple in bubble_dict.items():
                                                         numeric_tuple[3])
 
 #Initialize dictionaries for storing the cutouts
-#The abandoned cutouts store arrays that are too small to be resized
-cutout_dict = {}
-abandoned_cutouts = {}
+#The leaked_bubble_cutout_dict store cutouts that had an index outside of valid array.
+cutout_dict = {} #Contains 3738 for my case
+leaked_bubble_cutout_dict = {} #Contains 6 for my case
 
 #Loop parameters
 pad = 10
@@ -152,21 +152,23 @@ for name,value in converted_bubble_dict.items():
     top = center[1] - (radius + pad)
     bot = center[1] + (radius + pad)
 
+    #Corrects for out-of-range negative top indices
+    #For some reason, the bubbles were only out of range on the top...
+    if top <= 0:
+        top = 0
+        extracted_leaking_bubble = final_panorama[top:bot,left:right,:]
+        leaked_cutout = resize(extracted_leaking_bubble, dim)
+        leaked_bubble_cutout_dict[name] = (leaked_cutout, radius, hitrate)
+        continue
+    
     #Extract the bubble from the array
     extracted_bubble = final_panorama[top:bot,left:right,:]
-
-    #Workaround for resize() failure for zero-arrays.
-    #Failures get dumped into abandoned_cutouts
-    if extracted_bubble.size == 0:
-        abandoned_cutouts[name] = (extracted_bubble)
-        continue
 
     #Make the resized cutout
     cutout = resize(extracted_bubble, dim)
 
     #Fill the cutout dictionary with valid arrays relavant numerics
     cutout_dict[name] = (cutout, radius, hitrate)
-
 
 def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
     '''
@@ -230,7 +232,6 @@ def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
         plt.title(plot_title, fontsize=6)
     print("Exit figure to continue...")
     plt.show()
-
 
 
 show_cutout_samples(cutout_dict, show_best=False)
