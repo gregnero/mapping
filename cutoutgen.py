@@ -158,7 +158,7 @@ for name,value in converted_bubble_dict.items():
         top = 0
         extracted_leaking_bubble = final_panorama[top:bot,left:right,:]
         leaked_cutout = resize(extracted_leaking_bubble, dim)
-        leaked_bubble_cutout_dict[name] = (leaked_cutout, radius, hitrate)
+        leaked_bubble_cutout_dict[name] = (leaked_cutout, radius, hitrate, center)
         continue
     
     #Extract the bubble from the array
@@ -168,7 +168,7 @@ for name,value in converted_bubble_dict.items():
     cutout = resize(extracted_bubble, dim)
 
     #Fill the cutout dictionary with valid arrays relavant numerics
-    cutout_dict[name] = (cutout, radius, hitrate)
+    cutout_dict[name] = (cutout, radius, hitrate, center)
 
 def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
     '''
@@ -234,10 +234,49 @@ def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
     plt.show()
 
 
+
+
+
+'''THIS WORKED ONCE I SWEAR
+control_cutout_dict = {}
+
+for cutout_name, cutout_values in cutout_dict.items():
+
+    bubble_radius = cutout_values[1]
+    bubble_hitrate = cutout_values[2]
+    bubble_center = cutout_values[3]
+
+    bubble_glon = bubble_center[0]
+    bubble_glat = bubble_center[1]
+
+    control_glon = 386999 - bubble_glon
+    control_glat = 5999 - bubble_glat
+
+    control_center = (control_glon, control_glat)
+
+    left = control_center[0] - (bubble_radius + pad)
+    right = control_center[0] + (bubble_radius + pad)
+    top = control_center[1] - (bubble_radius + pad)
+    bot = control_center[1] + (bubble_radius + pad)
+
+    extracted_control = final_panorama[top:bot,left:right,:]
+
+    control_cutout = resize(extracted_control, dim)
+
+    control_cutout_dict[cutout_name] = (control_cutout, bubble_radius, bubble_hitrate, control_center)
+'''
+
+
+
+
+
+
+
+'''For sample cutout display
 show_cutout_samples(cutout_dict, show_best=False)
 
 show_cutout_samples(cutout_dict, show_best=True)
-
+'''
 
 '''Correlation between radius and hitrate
 radii = []
