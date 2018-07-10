@@ -256,3 +256,28 @@ for name,value in converted_bubble_dict.items():
 
     #Fill the control dictionary
     control_dict[name] = (control_cutout, radius, hitrate, control_center)
+
+
+
+'''Prove mirror symmetry between bubble cutout and control
+test_name = '1G303341-007180'
+print(cutout_dict[test_name][3][0], cutout_dict[test_name][3][1])
+print(control_dict[test_name][3][0], control_dict['1G303341-007180'][3][1])
+
+plt.scatter(cutout_dict[test_name][3][0], cutout_dict[test_name][3][1])
+plt.scatter(control_dict[test_name][3][0], control_dict[test_name][3][1])
+plt.scatter(193499, 2999, marker='x')
+
+plt.show()
+'''
+
+'''Prove that all the names match up between bubble cutouts and controls
+successlist = []
+
+for the_name in cutout_dict.keys():
+    if (the_name in control_dict.keys()) == True:
+        successlist.append(1)
+print(len(list(cutout_dict.keys())))
+print(len(list(control_dict.keys())))
+print(len(successlist))
+'''
