@@ -37,36 +37,39 @@ for i in range(0,3744):
     bubble_dict[IDs[i,0]] = (bubble_numerics[i,0], bubble_numerics[i,1],
                              bubble_numerics[i,2], bubble_numerics[i,3])
 
-#Initialize an ordered dictionary to store image (name:array) pairs
-image_dict = collections.OrderedDict()
+if not 'image_dict' in globals():
+    #Initialize an ordered dictionary to store image (name:array) pairs
+    image_dict = collections.OrderedDict()
 
-#Load the sorted image names and arrays into the dictionary
-for file in sorted(os.listdir("../Desktop/mapping_data")):
-    if file.endswith(".jpg"):
-        with open(os.path.join("../Desktop/mapping_data", file), 'rb') as myfile:
-            image_dict[file] = io.imread(myfile.name)
-            print("Status: Loaded image %s" %file)
+    #Load the sorted image names and arrays into the dictionary
+    for file in sorted(os.listdir("../Desktop/mapping_data")):
+        if file.endswith(".jpg"):
+            with open(os.path.join("../Desktop/mapping_data", file), 'rb') as myfile:
+                image_dict[file] = io.imread(myfile.name)
+                print("Status: Loaded image %s" %file)
 
-#Initialize a list to store all of the image arrays from image_dict
-image_list_unordered = []
-
-#Fill the list with the arrays
-for array_value in image_dict.values():
-    image_list_unordered.append(array_value)
-
-#Split this list into the northgrid/southgrid lists
-northgrid_list = image_list_unordered[0:22][::-1]
-southgrid_list = image_list_unordered[22:43][::-1]
-
-#Construct the spatially oriented northgrid and southgrid arrays
-northgrid = np.concatenate(northgrid_list, axis=1)
-print("Status: northgrid created.")
-southgrid = np.concatenate(southgrid_list, axis=1)
-print("Status: southgrid created.")
-
-#Construct the final array of concatenated spatially arranged images
-final_panorama = np.concatenate((northgrid,southgrid), axis=1)
-print("Status: final image created.")
+if not 'final_panorama' in globals():
+    #Initialize a list to store all of the image arrays from image_dict
+    image_list_unordered = []
+    
+    #Fill the list with the arrays
+    for array_value in image_dict.values():
+        image_list_unordered.append(array_value)
+    
+    #Split this list into the northgrid/southgrid lists
+    northgrid_list = image_list_unordered[0:22][::-1]
+    southgrid_list = image_list_unordered[22:43][::-1]
+    
+    
+    #Construct the spatially oriented northgrid and southgrid arrays
+    northgrid = np.concatenate(northgrid_list, axis=1)
+    print("Status: northgrid created.")
+    southgrid = np.concatenate(southgrid_list, axis=1)
+    print("Status: southgrid created.")
+    
+    #Construct the final array of concatenated spatially arranged images
+    final_panorama = np.concatenate((northgrid,southgrid), axis=1)
+    print("Status: final image created.")
 
 def degree_to_pixel(glon, glat, reff, array):
     '''
@@ -129,46 +132,68 @@ for bubblename, numeric_tuple in bubble_dict.items():
                                                         numeric_tuple[2], final_panorama),
                                                         numeric_tuple[3])
 
-#Initialize dictionaries for storing the cutouts
-#The leaked_bubble_cutout_dict store cutouts that had an index outside of valid array.
-cutout_dict = {} #Contains 3738 for my case
-leaked_bubble_cutout_dict = {} #Contains 6 for my case
+'''Initialize dictionaries for storing the cutouts
+>cutout_dict contains clean, valid bubbles with no boundary errors
+>control_dict contains clean, valid control samples that coorespond to each bubble's mirror location
+'''
+cutout_dict = {}
+control_dict = {}
 
 #Loop parameters
 pad = 10
 dim = (224,224,3)
 
-#Loop to create the cutouts
+#Loop to create the cutouts, control cutouts, and trash
 for name,value in converted_bubble_dict.items():
 
     #Get values from converted_bubble_dict
-    center = (value[0][0], value[0][1])
+    bubble_center = (value[0][0], value[0][1])
     radius = value[0][2]
     hitrate = value[1]
     
+    #Get the center for each control, which is the mirror location of the bubble
+    control_center = ((386999 - bubble_center[0]), (5999 - bubble_center[1])) 
+
     #Establish crop borders for the bubble
-    left = center[0] - (radius + pad)
-    right = center[0] + (radius + pad)
-    top = center[1] - (radius + pad)
-    bot = center[1] + (radius + pad)
+    bubble_left = center[0] - (radius + pad)
+    bubble_right = center[0] + (radius + pad)
+    bubble_top = center[1] - (radius + pad)
+    bubble_bot = center[1] + (radius + pad)
 
-    #Corrects for out-of-range negative top indices
-    #For some reason, the bubbles were only out of range on the top...
-    if top <= 0:
-        top = 0
-        extracted_leaking_bubble = final_panorama[top:bot,left:right,:]
-        leaked_cutout = resize(extracted_leaking_bubble, dim)
-        leaked_bubble_cutout_dict[name] = (leaked_cutout, radius, hitrate, center)
-        continue
-    
+    #Skip bubbles that leak outside of meaningful array range
+    if bubble_top < 0 or bubble_bot > 5999 or bubble_left < 0 or bubble_right > 386999:
+       continue 
+   
+    #Establish crop borders for the control
+    control_left = control_center[0] - (radius + pad)
+    control_right = control_center[0] + (radius + pad)
+    control_top = control_center[1] - (radius + pad)
+    control_bot = control_center[1] + (radius + pad)
+
+    #Skip controls that leak outside of meaningful array range
+    if control_top < 0 or control_bot > 5999 or control_left < 0 or control_right > 386999:
+       continue 
+
     #Extract the bubble from the array
-    extracted_bubble = final_panorama[top:bot,left:right,:]
+    extracted_bubble = final_panorama[bubble_top:bubble_bot,bubble_left:bubble_right,:]
 
-    #Make the resized cutout
-    cutout = resize(extracted_bubble, dim)
+    #Extract the control from the array
+    extracted_control = final_panorama[control_top:control_bot,control_left:control_right,:]
 
-    #Fill the cutout dictionary with valid arrays relavant numerics
-    cutout_dict[name] = (cutout, radius, hitrate, center)
+    #Make the resized cutout of the bubble
+    bubble_cutout = resize(extracted_bubble, dim)
+
+    #Make the resized cutout of the control
+    control_cutout = resize(extracted_control, dim)
+
+    #Fill the cutout dictionary 
+    cutout_dict[name] = (bubble_cutout, radius, hitrate, bubble_center)
+
+    #Fill the control dictionary
+    control_dict[name] = (control_cutout, radius, hitrate, control_center)
+
+
+
 
 def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
     '''
@@ -234,49 +259,12 @@ def show_cutout_samples(cutout_dictionary, show_best, num_samples=12):
     plt.show()
 
 
-
-
-
-'''THIS WORKED ONCE I SWEAR
-control_cutout_dict = {}
-
-for cutout_name, cutout_values in cutout_dict.items():
-
-    bubble_radius = cutout_values[1]
-    bubble_hitrate = cutout_values[2]
-    bubble_center = cutout_values[3]
-
-    bubble_glon = bubble_center[0]
-    bubble_glat = bubble_center[1]
-
-    control_glon = 386999 - bubble_glon
-    control_glat = 5999 - bubble_glat
-
-    control_center = (control_glon, control_glat)
-
-    left = control_center[0] - (bubble_radius + pad)
-    right = control_center[0] + (bubble_radius + pad)
-    top = control_center[1] - (bubble_radius + pad)
-    bot = control_center[1] + (bubble_radius + pad)
-
-    extracted_control = final_panorama[top:bot,left:right,:]
-
-    control_cutout = resize(extracted_control, dim)
-
-    control_cutout_dict[cutout_name] = (control_cutout, bubble_radius, bubble_hitrate, control_center)
-'''
-
-
-
-
-
-
-
 '''For sample cutout display
 show_cutout_samples(cutout_dict, show_best=False)
 
 show_cutout_samples(cutout_dict, show_best=True)
 '''
+
 
 '''Correlation between radius and hitrate
 radii = []
