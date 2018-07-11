@@ -133,12 +133,12 @@ IDs = bubble_data[:,0].reshape((3744,1))
 
 #Create an array with the quantitative bubble info (columnated)
 '''Current numerics:
-   galactic longitude (degrees)
-   galactic latitude  (degrees)
-   effective radius   (degrees)
-   hitrate            (unitless)
-   ra                 (degrees)
-   dec                (degrees)
+   [0]galactic longitude (degrees)
+   [1]galactic latitude  (degrees)
+   [2]effective radius   (degrees)
+   [3]hitrate            (unitless)
+   [4]ra                 (degrees)
+   [5]dec                (degrees)
 '''
 bubble_numerics = (np.vstack((bubble_data[:,1], bubble_data[:,2],
                               bubble_data[:,3]/60, bubble_data[:,4],
@@ -270,14 +270,6 @@ for name,value in converted_bubble_dict.items():
     #Fill the control dictionary
     control_name = name + "_control"
     control_dict[control_name] = (control_cutout, radius, hitrate, control_center)
-
-
-
-
-
-
-
-
 
 
 '''Prove mirror symmetry between bubble cutout and control
