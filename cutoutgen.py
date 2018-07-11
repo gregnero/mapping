@@ -137,9 +137,12 @@ IDs = bubble_data[:,0].reshape((3744,1))
    galactic latitude  (degrees)
    effective radius   (degrees)
    hitrate            (unitless)
+   ra                 (degrees)
+   dec                (degrees)
 '''
 bubble_numerics = (np.vstack((bubble_data[:,1], bubble_data[:,2],
-                              bubble_data[:,3]/60, bubble_data[:,4]))).T
+                              bubble_data[:,3]/60, bubble_data[:,4],
+                              bubble_data[:,5], bubble_data[:,6]))).T
 
 #Initialize a dictionary to store the bubble data
 bubble_dict = {}
@@ -147,7 +150,8 @@ bubble_dict = {}
 #Fill the bubble dictionary with the IDs as keys and numerics as values
 for i in range(0,3744):
     bubble_dict[IDs[i,0]] = (bubble_numerics[i,0], bubble_numerics[i,1],
-                             bubble_numerics[i,2], bubble_numerics[i,3])
+                             bubble_numerics[i,2], bubble_numerics[i,3],
+                             bubble_numerics[i,4], bubble_numerics[i,5])
 
 if not 'image_dict' in globals():
     #Initialize an ordered dictionary to store image (name:array) pairs
@@ -220,10 +224,10 @@ for name,value in converted_bubble_dict.items():
     control_center = ((386999 - bubble_center[0]), (5999 - bubble_center[1])) 
 
     #Establish crop borders for the bubble
-    bubble_left = center[0] - (radius + pad)
-    bubble_right = center[0] + (radius + pad)
-    bubble_top = center[1] - (radius + pad)
-    bubble_bot = center[1] + (radius + pad)
+    bubble_left = bubble_center[0] - (radius + pad)
+    bubble_right = bubble_center[0] + (radius + pad)
+    bubble_top = bubble_center[1] - (radius + pad)
+    bubble_bot = bubble_center[1] + (radius + pad)
 
     #Skip bubbles that leak outside of meaningful array range
     if bubble_top < 0 or bubble_bot > 5999 or bubble_left < 0 or bubble_right > 386999:
