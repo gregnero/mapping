@@ -204,6 +204,13 @@ for bubblename, numeric_tuple in bubble_dict.items():
 cutout_dict = {}
 control_dict = {}
 
+'''Initialize lists to store names (only) of the skipped bubbles
+>skipped_cutouts stores the names of the cutouts that were skipped
+>skipped_controls stores the names of the controls that were skipped
+'''
+skipped_cutouts = []
+skipped_controls = []
+
 #Loop parameters
 pad = 10
 dim = (224,224,3)
@@ -227,6 +234,7 @@ for name,value in converted_bubble_dict.items():
 
     #Skip bubbles that leak outside of meaningful array range
     if bubble_top < 0 or bubble_bot > 5999 or bubble_left < 0 or bubble_right > 386999:
+       skipped_cutouts.append(name)
        continue 
    
     #Establish crop borders for the control
@@ -237,6 +245,7 @@ for name,value in converted_bubble_dict.items():
 
     #Skip controls that leak outside of meaningful array range
     if control_top < 0 or control_bot > 5999 or control_left < 0 or control_right > 386999:
+       skipped_controls.append(name)
        continue 
 
     #Extract the bubble from the array
@@ -256,6 +265,13 @@ for name,value in converted_bubble_dict.items():
 
     #Fill the control dictionary
     control_dict[name] = (control_cutout, radius, hitrate, control_center)
+
+
+
+
+
+
+
 
 
 
