@@ -259,7 +259,8 @@ for name,value in converted_bubble_dict.items():
     cutout_dict[name] = (bubble_cutout, radius, hitrate, bubble_center)
 
     #Fill the control dictionary
-    control_dict[name] = (control_cutout, radius, hitrate, control_center)
+    control_name = name + "_control"
+    control_dict[control_name] = (control_cutout, radius, hitrate, control_center)
 
 
 
