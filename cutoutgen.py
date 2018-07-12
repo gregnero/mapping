@@ -130,17 +130,17 @@ def dict_adjust(original_bubble_dict, dict_with_cutouts):
     Returns:
     ______________
     dictionary with form: {ID: bubble_cutout, glon, glat, r_eff, hitrate, ra, dec} or
-                          {ID_control: control_cutout, glon, glat, r_eff, hitrate, ra, dec}
-    [0]glon: degrees
-    [1]glat: degrees
-    [2]r_eff: degrees
-    [3]hitrate: unitless
-    [4]ra: degrees
-    [5]dec: degrees    
+                          {ID_control: control_cutout, X, X, X, X, X, X} 
+    [0]image_array
+    [1]glon: degrees
+    [2]glat: degrees
+    [3]r_eff: degrees
+    [4]hitrate: unitless
+    [5]ra: degrees
+    [6]dec: degrees    
     
-    Note: for control cutouts, the metadata represents the control's coresponding
-          bubble metadata, NOT the cutout's metadata itself. Hope to later adapt
-          to include meaningful cutout metadata
+    Note: for control cutouts, the metadata is represented by placeholder X's (str)
+          intend to add meaningful metadata later 
  
     Args:
     --------------
@@ -165,7 +165,7 @@ def dict_adjust(original_bubble_dict, dict_with_cutouts):
                 break 
             #This elif catches the control cutouts
             elif (name1 + "_control") == name2:
-                new_dict[name1 + "_control"] = (value2[0], value1)
+                new_dict[name1 + "_control"] = (value2[0], 'X', 'X', 'X', 'X', 'X', 'X')
                 break
             else:
                 continue
