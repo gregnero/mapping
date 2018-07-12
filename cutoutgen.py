@@ -125,6 +125,54 @@ def degree_to_pixel(glon, glat, reff, array):
     return (glon_idx, glat_idx, radius_in_pixels)
 
 
+def dict_adjust(original_bubble_dict, dict_with_cutouts):
+    '''
+    Returns:
+    ______________
+    dictionary with form: {ID: bubble_cutout, glon, glat, r_eff, hitrate, ra, dec} or
+                          {ID_control: control_cutout, glon, glat, r_eff, hitrate, ra, dec}
+    [0]glon: degrees
+    [1]glat: degrees
+    [2]r_eff: degrees
+    [3]hitrate: unitless
+    [4]ra: degrees
+    [5]dec: degrees    
+    
+    Note: for control cutouts, the metadata represents the control's coresponding
+          bubble metadata, NOT the cutout's metadata itself. Hope to later adapt
+          to include meaningful cutout metadata
+ 
+    Args:
+    --------------
+    original_bubble_dict: dict, the original dictionary of bubble:numerics data
+    dict_with_cutouts: dict, the cutout/control dictionary with other metadata  
+
+    Usage:
+    ______________
+    new_adjusted_dictionary = dict_adjust(bubble_dict, cutout_dict)
+
+    '''
+    
+    #Initialize the new dictionary to return later
+    new_dict = {}
+    
+    #Loop through the two dictionaries to match IDs and consolidate meaningful metadata
+    for name1, value1 in original_bubble_dict.items():
+        for name2, value2 in dict_with_cutouts.items():
+            #This if catches the bubble cutouts
+            if name1 == name2:
+                new_dict[name1] = (value2[0], value1)
+                break 
+            #This elif catches the control cutouts
+            elif (name1 + "_control") == name2:
+                new_dict[name1 + "_control"] = (value2[0], value1)
+                break
+            else:
+                continue
+
+    return new_dict
+
+
 #Read in the bubble csv with pandas and then convert to a numpy array
 bubble_data = (pd.read_csv("../Desktop/mapping_data/bubbly.csv")).values
 
@@ -270,6 +318,11 @@ for name,value in converted_bubble_dict.items():
     #Fill the control dictionary
     control_name = name + "_control"
     control_dict[control_name] = (control_cutout, radius, hitrate, control_center)
+
+
+
+prepared_cutout_dict = dict_adjust(bubble_dict, cutout_dict)
+prepared_control_dict = dict_adjust(bubble_dict, control_dict)
 
 
 '''Prove mirror symmetry between bubble cutout and control
