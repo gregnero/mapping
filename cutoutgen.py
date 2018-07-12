@@ -173,6 +173,20 @@ def dict_adjust(original_bubble_dict, dict_with_cutouts):
     return new_dict
 
 
+def merge_dicts(dict1, dict2):
+    
+    merged_dict = {}
+
+    for name_1, value_1 in dict1.items():
+        merged_dict[name_1] = value_1
+
+    for name_2, value_2 in dict2.items():
+        merged_dict[name_2] = value_2
+
+    return merged_dict
+
+
+
 #Read in the bubble csv with pandas and then convert to a numpy array
 bubble_data = (pd.read_csv("../Desktop/mapping_data/bubbly.csv")).values
 
@@ -323,6 +337,10 @@ for name,value in converted_bubble_dict.items():
 
 prepared_cutout_dict = dict_adjust(bubble_dict, cutout_dict)
 prepared_control_dict = dict_adjust(bubble_dict, control_dict)
+
+
+big_dict = merge_dicts(prepared_cutout_dict, prepared_control_dict)
+
 
 
 '''Prove mirror symmetry between bubble cutout and control
