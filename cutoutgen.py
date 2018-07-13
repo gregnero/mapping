@@ -334,23 +334,43 @@ for name,value in converted_bubble_dict.items():
     control_dict[control_name] = (control_cutout, radius, hitrate, control_center)
 
 
-
+#Prepare the bubble/control cutout dicts for merging
 prepared_cutout_dict = dict_adjust(bubble_dict, cutout_dict)
 prepared_control_dict = dict_adjust(bubble_dict, control_dict)
 
-
+#Merge the prepared bubble/control cutout dicts
 big_dict = merge_dicts(prepared_cutout_dict, prepared_control_dict)
 
+
+the_info = []
+
+
+#Tell what directory to save cutouts to
 save_dir = 'cutouts'
 
+#Save cutouts to save_dir
 image_counter = 0
 for imagename, imageinfo in big_dict.items():
     image_array = imageinfo[0]
     final_name = imagename + ".jpg"
+
+    location = '/Users/gnero/mapping/cutouts/' + final_name
+
+    tempdict = {'location': location, 'radec' : (3,3), 'meta' : {'dummy': 3}}
+    the_info.append(tempdict)
+    
+
     io.imsave(os.path.join(save_dir, final_name), image_array)
     image_counter = image_counter + 1
-
 print("Saved {} images!".format(image_counter))
+
+
+import pickle
+
+with open('gregs_data.pck', 'wb') as fp:
+    pickle.dump(the_info, fp, pickle.HIGHEST_PROTOCOL)
+
+
 
 
 
