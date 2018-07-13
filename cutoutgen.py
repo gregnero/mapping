@@ -341,6 +341,17 @@ prepared_control_dict = dict_adjust(bubble_dict, control_dict)
 
 big_dict = merge_dicts(prepared_cutout_dict, prepared_control_dict)
 
+save_dir = 'cutouts'
+
+image_counter = 0
+for imagename, imageinfo in big_dict.items():
+    image_array = imageinfo[0]
+    final_name = imagename + ".jpg"
+    io.imsave(os.path.join(save_dir, final_name), image_array)
+    image_counter = image_counter + 1
+
+print("Saved {} images!".format(image_counter))
+
 
 
 
