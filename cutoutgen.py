@@ -343,6 +343,7 @@ big_dict = merge_dicts(prepared_cutout_dict, prepared_control_dict)
 
 
 
+
 '''Prove mirror symmetry between bubble cutout and control
 test_name = '1G303341-007180'
 print(cutout_dict[test_name][3][0], cutout_dict[test_name][3][1])
