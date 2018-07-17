@@ -165,7 +165,7 @@ def dict_adjust(original_bubble_dict, dict_with_cutouts):
                 break 
             #This elif catches the control cutouts
             elif (name1 + "_control") == name2:
-                new_dict[name1 + "_control"] = (value2[0], 'X', 'X', 'X', 'X', 'X', 'X')
+                new_dict[name1 + "_control"] = (value2[0], (0, 0, 0, 0, 0, 0))
                 break
             else:
                 continue
@@ -353,10 +353,21 @@ image_counter = 0
 for imagename, imageinfo in big_dict.items():
     image_array = imageinfo[0]
     final_name = imagename + ".jpg"
+    hitrate = imageinfo[1][3]
+    ra = imageinfo[1][4]
+    dec = imageinfo[1][5]
+
+    #A binary identifier for bubble/not bubble to allow NN search in tsne
+    if "control" in final_name:
+        is_bubble = 0 #it isn't a bubble
+    else:
+        is_bubble = 1 #it is a bubble
+
 
     location = '/Users/gnero/mapping/cutouts/' + final_name
 
-    tempdict = {'location': location, 'radec' : (3,3), 'meta' : {'dummy': 3}}
+    tempdict = {'location': location, 'radec' : (ra,dec), 'meta' : {'hitrate': str(hitrate),
+                                                                    'is_bubble': str(is_bubble)}}
     the_info.append(tempdict)
     
 
