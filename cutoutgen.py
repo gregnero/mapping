@@ -278,8 +278,10 @@ skipped_cutouts = []
 skipped_controls = []
 
 #Loop parameters
-pad = 10
+pad = 50
 dim = (224,224,3)
+vshift = 0 #Also consider shifting relative to radius in loop!!!!!!
+hshift = 0 #Consider radius thing again
 
 #Loop to create the cutouts, control cutouts, and trash
 for name,value in converted_bubble_dict.items():
@@ -293,10 +295,10 @@ for name,value in converted_bubble_dict.items():
     control_center = ((386999 - bubble_center[0]), (5999 - bubble_center[1])) 
 
     #Establish crop borders for the bubble
-    bubble_left = bubble_center[0] - (radius + pad)
-    bubble_right = bubble_center[0] + (radius + pad)
-    bubble_top = bubble_center[1] - (radius + pad)
-    bubble_bot = bubble_center[1] + (radius + pad)
+    bubble_left = bubble_center[0] - (radius + pad) + hshift
+    bubble_right = bubble_center[0] + (radius + pad) + hshift
+    bubble_top = (bubble_center[1] - (radius + pad)) + vshift
+    bubble_bot = (bubble_center[1] + (radius + pad)) + vshift
 
     #Skip bubbles that leak outside of meaningful array range
     if bubble_top < 0 or bubble_bot > 5999 or bubble_left < 0 or bubble_right > 386999:
@@ -304,10 +306,10 @@ for name,value in converted_bubble_dict.items():
        continue 
    
     #Establish crop borders for the control
-    control_left = control_center[0] - (radius + pad)
-    control_right = control_center[0] + (radius + pad)
-    control_top = control_center[1] - (radius + pad)
-    control_bot = control_center[1] + (radius + pad)
+    control_left = control_center[0] - (radius + pad) + hshift
+    control_right = control_center[0] + (radius + pad) + hshift
+    control_top = (control_center[1] - (radius + pad)) + vshift
+    control_bot = (control_center[1] + (radius + pad)) + vshift
 
     #Skip controls that leak outside of meaningful array range
     if control_top < 0 or control_bot > 5999 or control_left < 0 or control_right > 386999:
