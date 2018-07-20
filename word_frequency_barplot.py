@@ -1,6 +1,8 @@
 #Author: Gregory Nero
 #
-#Returns a barplot of word frequency in a list
+#Purpose: plots word frequency from list as a barplot
+#
+#Date: July 20th, 2018
 
 def word_frequency_barplot(mylist, title):
     
@@ -23,11 +25,14 @@ def word_frequency_barplot(mylist, title):
     word_frequency_barplot(list_of_animal_names, 'Animal Frequency')
 
     '''
-
+    
+    #Get all of the unique names from the input list
     list_of_unique_names = list(set(mylist))
     
+    #Instantiate a dictionary for storing word:frequency pair
     frequency_dictionary = {}
 
+    #Loop to fill the dictionary
     for unique_name in list_of_unique_names:
         
         frequency_counter = 0
@@ -43,12 +48,21 @@ def word_frequency_barplot(mylist, title):
     
         frequency_dictionary[unique_name] = frequency_counter
 
-    plot_names = list(frequency_dictionary.keys())
-    plot_frequencies = list(frequency_dictionary.values())
 
+    #Strip the list information from the dictionary and prepare it for pass to plt.box()
+    plot_names = sorted(frequency_dictionary, key=frequency_dictionary.get)
+    plot_frequencies = sorted(frequency_dictionary.values())
+    plot_names.reverse()
+    plot_frequencies.reverse()
+
+
+    #Matplotlib stuff
     fig, ax = plt.subplots()
     ax.set_ylabel('Word Frequency')
     ax.set_title(title)
-    plt.bar(plot_names, plot_frequencies)
+    plt.bar(plot_names, plot_frequencies, width = 0.2) #width can be modified if needed
+    plt.ion() #allows for multiple figures per "session"
     plt.show()
 
+    #Inform that plotting was successful
+    print(title + ': has been displayed')
